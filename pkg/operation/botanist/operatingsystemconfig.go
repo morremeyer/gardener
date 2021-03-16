@@ -40,6 +40,8 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/sets"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // DefaultOperatingSystemConfig creates the default deployer for the OperatingSystemConfig custom resource.
@@ -56,6 +58,11 @@ func (b *Botanist) DefaultOperatingSystemConfig(seedClient client.Client) (opera
 		// https://kubernetes.io/docs/tasks/administer-cluster/nodelocaldns/.
 		clusterDNSAddress = NodeLocalIPVSAddress
 	}
+
+	log.WithFields(log.Fields{
+		"disableDNS": b.Shoot.DisableDNS,
+		"APIServerAddress": b.APIServerAddress,
+	}).Info("Shoot DNS settings")
 
 	return operatingsystemconfig.New(
 		b.Logger,
